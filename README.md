@@ -167,5 +167,4 @@ your blood pressure readings.
 
 ## Attributions
 
-Code was generated using [Claude](https://claude.ai/chat)
-Inspired by [Vpnry](https://github.com/vpnry/visualize-blood-pressure)
+Code was generated using [Claude](https://claude.ai/chat) and inspired by [Vpnry](https://github.com/vpnry/visualize-blood-pressure)
