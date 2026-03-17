@@ -1,0 +1,1179 @@
+/**
+ * styles.css
+ * OMRON Blood Pressure Dashboard — Main Stylesheet
+ *
+ * Follows iOS Human Interface Guidelines aesthetic.
+ * Supports light and dark colour schemes via CSS custom properties.
+ *
+ * Table of Contents:
+ *  1. Custom Properties (design tokens)
+ *  2. Dark-mode overrides
+ *  3. Reset & base
+ *  4. Navigation bar
+ *  5. Main layout
+ *  6. Period segment control
+ *  7. Stat cards
+ *  8. iOS grouped card
+ *  9. Chart legend & toggle
+ * 10. Two-column grid
+ * 11. Calendar
+ * 12. BP category list
+ * 13. Readings list & controls
+ * 14. Pagination
+ * 15. Empty state
+ * 16. Day-detail modal
+ * 17. Drag-and-drop overlay
+ * 18. Toast notification
+ * 19. Welcome screen
+ * 20. Responsive breakpoints
+ */
+
+/* ── 1. Custom Properties ───────────────────────── */
+:root {
+  /* Surfaces */
+  --ios-bg:       #f2f2f7;
+  --ios-surface:  #ffffff;
+  --ios-surface2: #f2f2f7;
+  --ios-grouped:  #efeff4;
+
+  /* Brand colours */
+  --ios-blue:     #007aff;
+  --ios-blue-dark:#0051d5;
+  --ios-red:      #ff3b30;
+  --ios-green:    #34c759;
+  --ios-orange:   #ff9500;
+  --ios-yellow:   #ffcc00;
+  --ios-pink:     #ff2d55;
+  --ios-teal:     #5ac8fa;
+  --ios-purple:   #af52de;
+
+  /* Grays */
+  --ios-gray:  #8e8e93;
+  --ios-gray2: #aeaeb2;
+  --ios-gray3: #c7c7cc;
+  --ios-gray4: #d1d1d6;
+  --ios-gray5: #e5e5ea;
+  --ios-gray6: #f2f2f7;
+
+  /* Label hierarchy */
+  --ios-label:     #000000;
+  --ios-label2:    rgba(60, 60, 67, 0.6);
+  --ios-label3:    rgba(60, 60, 67, 0.3);
+  --ios-label4:    rgba(60, 60, 67, 0.18);
+
+  /* Separators & fills */
+  --ios-separator: rgba(60, 60, 67, 0.18);
+  --ios-fill:      rgba(120, 120, 128, 0.12);
+  --ios-fill2:     rgba(120, 120, 128, 0.08);
+
+  /* Border radii */
+  --ios-radius:    12px;
+  --ios-radius-lg: 16px;
+  --ios-radius-xl: 20px;
+
+  /* Typography */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+
+  /* Blood-pressure category colours */
+  --normal:      #34c759;
+  --normal-bg:   rgba(52,  199, 89,  0.12);
+  --normal-text: #1a7a30;
+
+  --elevated:      #ff9500;
+  --elevated-bg:   rgba(255, 149, 0,  0.12);
+  --elevated-text: #a05a00;
+
+  --stage1:      #ff6b35;
+  --stage1-bg:   rgba(255, 107, 53, 0.12);
+  --stage1-text: #b03000;
+
+  --stage2:      #ff3b30;
+  --stage2-bg:   rgba(255, 59,  48, 0.12);
+  --stage2-text: #c0001a;
+
+  --crisis:      #8b0000;
+  --crisis-bg:   rgba(139, 0,   0,  0.15);
+  --crisis-text: #5c0000;
+}
+
+/* ── 2. Dark-mode overrides ─────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ios-bg:      #000000;
+    --ios-surface: #1c1c1e;
+    --ios-surface2:#2c2c2e;
+    --ios-grouped: #1c1c1e;
+
+    --ios-label:  #ffffff;
+    --ios-label2: rgba(235, 235, 245, 0.6);
+    --ios-label3: rgba(235, 235, 245, 0.3);
+    --ios-label4: rgba(235, 235, 245, 0.18);
+
+    --ios-separator: rgba(84, 84, 88, 0.65);
+    --ios-fill:      rgba(120, 120, 128, 0.20);
+    --ios-fill2:     rgba(120, 120, 128, 0.12);
+
+    --ios-gray5: #1c1c1e;
+    --ios-gray6: #000000;
+
+    --normal-bg:   rgba(52,  199, 89,  0.18);
+    --normal-text: #30d158;
+
+    --elevated-bg:   rgba(255, 149, 0,  0.18);
+    --elevated-text: #ff9f0a;
+
+    --stage1-bg:   rgba(255, 107, 53, 0.18);
+    --stage1-text: #ff6b35;
+
+    --stage2-bg:   rgba(255, 59,  48, 0.18);
+    --stage2-text: #ff453a;
+
+    --crisis-bg:   rgba(139, 0,   0,  0.20);
+    --crisis-text: #ff6b6b;
+  }
+}
+
+/* ── 3. Reset & base ────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--ios-bg);
+  color: var(--ios-label);
+  min-height: 100vh;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── 4. Navigation bar ──────────────────────────── */
+.navbar {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--ios-separator);
+  padding: env(safe-area-inset-top, 0) 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+@media (prefers-color-scheme: dark) {
+  .navbar {
+    background: rgba(28, 28, 30, 0.85);
+  }
+}
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  gap: 10px;
+}
+
+.navbar-title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: var(--ios-label);
+  white-space: nowrap;
+}
+
+.navbar-title span {
+  color: var(--ios-blue);
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Navigation button (pill style) */
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--ios-fill);
+  border: none;
+  color: var(--ios-blue);
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.nav-btn:active {
+  opacity: 0.6;
+}
+
+
+.nav-btn svg {
+  flex-shrink: 0;
+}
+
+/* Hidden native file input — triggered via label */
+#csv-input {
+  display: none;
+}
+
+.file-lbl {
+  font-size: 11px;
+  color: var(--ios-label3);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── 5. Main layout ─────────────────────────────── */
+.main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+/* ── 6. Period segment control ──────────────────── */
+.seg-wrap {
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.seg {
+  display: inline-flex;
+  background: var(--ios-fill);
+  border-radius: 9px;
+  padding: 2px;
+  gap: 0;
+  min-width: 100%;
+}
+
+.seg-btn {
+  flex: 1;
+  padding: 6px 10px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ios-label);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  text-align: center;
+  min-width: 60px;
+}
+
+.seg-btn.active {
+  background: var(--ios-surface);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+  color: var(--ios-label);
+}
+
+/* Custom date-range picker (visible when "Custom" is selected) */
+.custom-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--ios-label2);
+}
+
+.custom-range input[type="date"] {
+  font-family: var(--font);
+  font-size: 13px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: var(--ios-radius);
+  background: var(--ios-surface);
+  color: var(--ios-label);
+  box-shadow: 0 0 0 0.5px var(--ios-separator);
+}
+
+/* ── 7. Stat cards ──────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: var(--ios-surface);
+  border-radius: var(--ios-radius-lg);
+  padding: 14px 16px;
+  box-shadow: 0 1px 0 var(--ios-separator);
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ios-label2);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+
+.stat-val {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.stat-sub {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Category / status pill badge */
+.ios-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+}
+
+/* Min / max row beneath a stat value */
+.stat-minmax {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--ios-label2);
+}
+
+.stat-minmax span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.minmax-label {
+  color: var(--ios-label3);
+  font-size: 10px;
+}
+
+/* ── 8. iOS grouped card ────────────────────────── */
+.ios-card {
+  background: var(--ios-surface);
+  border-radius: var(--ios-radius-xl);
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 1px 0 var(--ios-separator);
+}
+
+.ios-card-header {
+  padding: 14px 16px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ios-label2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ios-card-body {
+  padding: 0 16px 16px;
+}
+
+.ios-card-body-pad {
+  padding: 12px 16px 16px;
+}
+
+/* ── 9. Chart legend & view toggle ──────────────── */
+.chart-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: var(--ios-label2);
+  align-items: center;
+}
+
+.chart-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Solid dot in legend */
+.ld {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Dashed line in legend (pulse) */
+.ld-dash {
+  height: 2px;
+  width: 16px;
+  flex-shrink: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    #007aff 0 4px,
+    transparent 4px 7px
+  );
+}
+
+.chart-toggle-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.chart-view-seg {
+  display: inline-flex;
+  background: var(--ios-fill);
+  border-radius: 7px;
+  padding: 2px;
+}
+
+.chart-view-btn {
+  padding: 4px 12px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ios-label2);
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+
+.chart-view-btn.active {
+  background: var(--ios-surface);
+  color: var(--ios-label);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* ── 10. Two-column layout ──────────────────────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* ── 11. Calendar ───────────────────────────────── */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+}
+
+.cal-nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ios-blue);
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s;
+}
+
+.cal-nav-btn:active {
+  background: var(--ios-fill);
+}
+
+.cal-month {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  padding: 0 10px 10px;
+}
+
+.cal-hdr {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ios-label2);
+  text-align: center;
+  padding: 3px 0;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.cal-day.has-data:active {
+  transform: scale(0.9);
+}
+
+.cal-inner {
+  width: 88%;
+  height: 88%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cal-num {
+  font-size: 10px;
+  font-weight: 600;
+  position: relative;
+  z-index: 2;
+}
+
+.cal-empty {
+  font-size: 10px;
+  color: var(--ios-label3);
+}
+
+/* IHB indicator dot on calendar cell */
+.cal-ihb {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ios-orange);
+  border: 1.5px solid var(--ios-surface);
+  z-index: 3;
+}
+
+.cal-legend {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 4px 12px 12px;
+}
+
+.cal-legend span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--ios-label2);
+}
+
+/* ── 12. BP category list ───────────────────────── */
+.cat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 0.5px solid var(--ios-separator);
+}
+
+.cat-item:last-child {
+  border-bottom: none;
+}
+
+.cat-color-bar {
+  width: 4px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.cat-info {
+  flex: 1;
+}
+
+.cat-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.cat-range {
+  font-size: 12px;
+  color: var(--ios-label2);
+}
+
+.cat-source {
+  font-size: 11px;
+  color: var(--ios-label3);
+  padding: 8px 16px 12px;
+}
+
+/* ── 13. Readings list & controls ───────────────── */
+.reading-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 0.5px solid var(--ios-separator);
+  gap: 10px;
+  font-size: 13px;
+}
+
+.reading-item:last-child {
+  border-bottom: none;
+}
+
+.reading-date {
+  color: var(--ios-label2);
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+.reading-val {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  min-width: 70px;
+  flex-shrink: 0;
+}
+
+.reading-pulse {
+  color: var(--ios-label2);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* Irregular Heart-Beat badge */
+.ihb-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 149, 0, 0.15);
+  color: var(--ios-orange);
+  display: inline-block;
+}
+
+/* Filter / page-size control row */
+.readings-controls {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 16px 12px;
+  border-bottom: 0.5px solid var(--ios-separator);
+}
+
+.readings-ctrl-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ios-label2);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+
+.readings-filter-wrap {
+  flex: 1;
+  min-width: 200px;
+}
+
+.readings-pagesize-wrap {
+  flex-shrink: 0;
+}
+
+.filter-pills {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 4px 11px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--ios-separator);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ios-label2);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.filter-pill:active {
+  opacity: 0.6;
+}
+
+/* Active state per category colour */
+.filter-pill[data-cat="all"].active      { background: var(--ios-fill); color: var(--ios-label); border-color: transparent; }
+.filter-pill[data-cat="Normal"].active   { background: rgba(52,  199, 89,  0.18); color: #1a7a30; border-color: rgba(52,  199, 89,  0.4); }
+.filter-pill[data-cat="Elevated"].active { background: rgba(255, 149, 0,  0.18); color: #8a5200; border-color: rgba(255, 149, 0,  0.4); }
+.filter-pill[data-cat="High Stage 1"].active { background: rgba(255, 107, 53, 0.18); color: #b03000; border-color: rgba(255, 107, 53, 0.4); }
+.filter-pill[data-cat="High Stage 2"].active { background: rgba(255, 59,  48, 0.18); color: #c0001a; border-color: rgba(255, 59,  48, 0.4); }
+.filter-pill[data-cat="Crisis"].active   { background: rgba(139, 0,   0,  0.20); color: #5c0000; border-color: rgba(139, 0,   0,  0.4); }
+
+.pagesize-seg {
+  min-width: unset;
+}
+
+.pagesize-seg .seg-btn {
+  min-width: 40px;
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+/* ── 14. Pagination ─────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 0.5px solid var(--ios-separator);
+}
+
+.page-info {
+  font-size: 13px;
+  color: var(--ios-label2);
+}
+
+.page-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.page-btn {
+  background: var(--ios-fill);
+  border: none;
+  color: var(--ios-blue);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.page-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.page-btn:active:not(:disabled) {
+  opacity: 0.6;
+}
+
+/* ── 15. Empty state ────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ios-label2);
+}
+
+.empty-state-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.empty-state-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ── 16. Day-detail modal ───────────────────────── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 20px 16px;
+}
+
+.modal-backdrop.open {
+  display: flex;
+}
+
+.modal-sheet {
+  background: var(--ios-surface);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: scale(0.95) translateY(10px);
+  opacity: 0;
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1),
+              opacity   0.22s ease;
+  padding-bottom: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-backdrop.open .modal-sheet {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--ios-gray4);
+  margin: 10px auto 0;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 8px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.modal-close {
+  background: var(--ios-fill);
+  border: none;
+  color: var(--ios-label2);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:active {
+  opacity: 0.6;
+}
+
+.modal-subtitle {
+  padding: 0 20px 14px;
+  font-size: 13px;
+  color: var(--ios-label2);
+}
+
+.modal-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ios-label2);
+  padding: 10px 20px 6px;
+}
+
+.modal-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 20px 14px;
+}
+
+.modal-stat {
+  background: var(--ios-fill2);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.modal-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ios-label2);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 4px;
+}
+
+.modal-stat-val {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.modal-stat-unit {
+  font-size: 11px;
+  color: var(--ios-label2);
+  margin-top: 2px;
+}
+
+.modal-reading {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 0.5px solid var(--ios-separator);
+  gap: 12px;
+}
+
+.modal-reading:last-child {
+  border-bottom: none;
+}
+
+.modal-reading-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ios-fill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ios-label2);
+  flex-shrink: 0;
+}
+
+.modal-reading-bp {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.modal-reading-meta {
+  font-size: 12px;
+  color: var(--ios-label2);
+  margin-top: 2px;
+}
+
+.modal-reading-right {
+  margin-left: auto;
+  text-align: right;
+}
+
+.modal-cat-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 3px;
+}
+
+.modal-divider {
+  height: 8px;
+  background: var(--ios-bg);
+  margin: 4px 0;
+}
+
+/* ── 17. Drag-and-drop overlay ──────────────────── */
+.drop-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+
+.drop-overlay.active {
+  display: flex;
+}
+
+.drop-box {
+  background: var(--ios-surface);
+  border: 2px dashed var(--ios-gray3);
+  border-radius: 20px;
+  padding: 40px 60px;
+  text-align: center;
+}
+
+.drop-box-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.drop-box-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ios-label2);
+}
+
+/* ── 18. Toast notification ─────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(50, 50, 50, 0.95);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s;
+  pointer-events: none;
+  white-space: nowrap;
+  backdrop-filter: blur(20px);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── 19. Welcome screen ─────────────────────────── */
+#welcome-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.welcome-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #007aff, #0051d5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 36px;
+  box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3);
+}
+
+.welcome-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--ios-label);
+  margin-bottom: 16px;
+  line-height: 1.3;
+  max-width: 380px;
+}
+
+.welcome-title span {
+  color: var(--ios-blue);
+}
+
+.welcome-body {
+  font-size: 15px;
+  color: var(--ios-label2);
+  line-height: 1.6;
+  max-width: 360px;
+  margin-bottom: 32px;
+}
+
+.welcome-privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--ios-surface);
+  border-radius: var(--ios-radius-lg);
+  padding: 14px 18px;
+  max-width: 380px;
+  width: 100%;
+  margin-bottom: 28px;
+  text-align: left;
+  box-shadow: 0 1px 0 var(--ios-separator);
+}
+
+.welcome-privacy-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.welcome-privacy-text {
+  font-size: 13px;
+  color: var(--ios-label2);
+  line-height: 1.5;
+}
+
+.welcome-privacy-text strong {
+  display: block;
+  color: var(--ios-label);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+/* Primary CTA on the welcome screen */
+.welcome-upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ios-blue);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 28px;
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.35);
+}
+
+.welcome-upload-btn:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+
+.welcome-upload-btn svg {
+  flex-shrink: 0;
+}
+
+/* ── 20. Responsive breakpoints ─────────────────── */
+
+/* Tablet and smaller */
+@media (max-width: 680px) {
+  .stat-grid  { grid-template-columns: repeat(2, 1fr); }
+  .two-col    { grid-template-columns: 1fr; }
+  .main       { padding: 14px 12px 60px; }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-val  { font-size: 26px; }
+}
