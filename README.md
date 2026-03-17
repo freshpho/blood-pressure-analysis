@@ -4,6 +4,8 @@ A fully client-side, privacy-first dashboard for analysing blood pressure readin
 
 All processing happens locally in the browser — **no accounts, no servers, no data ever leaves your device**
 
+Initially created for personal use to make reading and visualising the details from OMRON easier when discussing with others.
+
 ---
 
 ## Features
